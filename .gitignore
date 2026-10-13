@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.env
+data/*.db
+data/*.db-*
+logs/*.log
+logs/*.log*
+ui/node_modules/
+ui/dist/
+ui/.env

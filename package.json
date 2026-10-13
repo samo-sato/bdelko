@@ -1,0 +1,37 @@
+{
+  "name": "bdelko",
+  "version": "1.0.0",
+  "description": "Self-hosted, single-admin server monitoring backend (active HTTP checks + passive heartbeats) with a built-in web UI.",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "db:init": "tsx src/db/init.ts",
+    "gen:token": "node scripts/gen-token.mjs",
+    "ui:install": "npm --prefix ui install",
+    "ui:dev": "npm --prefix ui run dev",
+    "ui:build": "npm --prefix ui run build",
+    "build:all": "npm run build && npm run ui:build"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.0",
+    "express": "^5.1.0",
+    "nodemailer": "^10.1.0",
+    "sqlite3": "^5.1.7",
+    "winston": "^3.14.2",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^24.0.0",
+    "@types/nodemailer": "^7.0.0",
+    "@types/sqlite3": "^3.1.11",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

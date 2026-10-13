@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <title>bdelko</title>
+    <script>
+      // Applies the theme class before first paint (no flash of wrong theme).
+      // This logic mirrors src/settings/theme.ts (resolveTheme) - keep in sync.
+      (function () {
+        try {
+          var mode = localStorage.getItem('bdelko.theme') || 'auto';
+          var darkFrom = localStorage.getItem('bdelko.autoDarkFrom') || '19:00';
+          var lightFrom = localStorage.getItem('bdelko.autoLightFrom') || '07:00';
+          function mins(s) {
+            var m = /^(\d{2}):(\d{2})$/.exec(s);
+            if (!m) return null;
+            var h = +m[1], mi = +m[2];
+            return h < 24 && mi < 60 ? h * 60 + mi : null;
+          }
+          var dark = false;
+          if (mode === 'dark') dark = true;
+          else if (mode === 'auto') {
+            var df = mins(darkFrom); if (df === null) df = 19 * 60;
+            var lf = mins(lightFrom); if (lf === null) lf = 7 * 60;
+            var d = new Date();
+            var now = d.getHours() * 60 + d.getMinutes();
+            dark = df === lf ? false : df < lf ? now >= df && now < lf : now >= df || now < lf;
+          }
+          var el = document.documentElement;
+          el.classList.toggle('dark', dark);
+          el.style.colorScheme = dark ? 'dark' : 'light';
+        } catch (e) {
+          /* storage unavailable - default theme applies */
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

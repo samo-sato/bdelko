@@ -1,0 +1,47 @@
+# =============================================================================
+# bdelko systemd unit (template)
+#
+# Install:
+#   1. Adjust User/Group, WorkingDirectory and ExecStart below.
+#      - WorkingDirectory: where you cloned/deployed bdelko (contains dist/).
+#      - ExecStart: point at your Node.js >= 24 binary. Examples:
+#          /usr/bin/node                                (distro package)
+#          /home/bdelko/.nvm/versions/node/v24.21.0/bin/node   (nvm install)
+#   2. sudo cp bdelko.service /etc/systemd/system/
+#   3. sudo systemctl daemon-reload
+#   4. sudo systemctl enable --now bdelko
+#   5. journalctl -u bdelko -f        # follow logs
+#
+# Notes:
+#   - The app reads .env from WorkingDirectory; make sure it exists and is
+#     readable by User (chmod 600, owned by that user).
+#   - The app exits(1) on bind failure and shuts down gracefully on SIGTERM,
+#     so Restart=on-failure + default KillSignal=SIGTERM behave correctly.
+#   - Update flow: git pull && npm install && npm run build:all
+#     && sudo systemctl restart bdelko
+# =============================================================================
+
+[Unit]
+Description=bdelko - self-hosted server monitoring
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=bdelko
+Group=bdelko
+WorkingDirectory=/opt/bdelko
+ExecStart=/usr/bin/node dist/index.js
+Restart=on-failure
+RestartSec=5
+
+# Hardening (optional, adjust to taste):
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+# ProtectHome=true blocks node installed via nvm in a home directory - either
+# use a system-wide node, or drop/relax this line.
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
